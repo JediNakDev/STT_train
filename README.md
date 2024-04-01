@@ -44,11 +44,11 @@ torchrun --nproc_per_node=${ngpu} train_hf_dataset.py \
 --num_steps 10000 \
 --resume_from_ckpt None \
 --output_dir op_dir_steps \
---train_datasets "google/fleurs" \
---train_dataset_configs th_th \
+--train_datasets "google/fleurs" "google/fleurs" \
+--train_dataset_configs th_th th_th \
 --train_dataset_splits train validation \
---train_dataset_text_columns transcription \
---eval_datasets google/fleurs \
+--train_dataset_text_columns transcription transcription \
+--eval_datasets "google/fleurs" \
 --eval_dataset_configs th_th \
 --eval_dataset_splits test \
 --eval_dataset_text_columns transcription

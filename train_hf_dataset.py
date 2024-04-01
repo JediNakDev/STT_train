@@ -10,7 +10,7 @@ from transformers import WhisperFeatureExtractor, WhisperTokenizer, WhisperProce
 #######################     ARGUMENT PARSING        #########################
 
 '''
-ngpu=4  # number of GPUs to perform distributed training on.
+ngpu=4 # number of GPUs to perform distributed training on.
 
 torchrun --nproc_per_node=${ngpu} train_hf_dataset.py \
 --model_name biodatlab/whisper-th-large-v3-combined \
@@ -25,11 +25,11 @@ torchrun --nproc_per_node=${ngpu} train_hf_dataset.py \
 --num_steps 10000 \
 --resume_from_ckpt None \
 --output_dir op_dir_steps \
---train_datasets "google/fleurs" \
---train_dataset_configs th_th \
+--train_datasets "google/fleurs" "google/fleurs" \
+--train_dataset_configs th_th th_th \
 --train_dataset_splits train validation \
---train_dataset_text_columns transcription \
---eval_datasets google/fleurs \
+--train_dataset_text_columns transcription transcription \
+--eval_datasets "google/fleurs" \
 --eval_dataset_configs th_th \
 --eval_dataset_splits test \
 --eval_dataset_text_columns transcription
@@ -274,7 +274,7 @@ def load_all_datasets(split):
     if split == 'train':
         for i, ds in enumerate(args.train_datasets):
             dataset = load_dataset(
-                ds, args.train_dataset_configs[i], split=args.train_dataset_splits[i])
+                ds, args.train_dataset_configs[i], split=args.train_dataset_splits[i], trust_remote_code=True)
             dataset = dataset.cast_column("audio", Audio(args.sampling_rate))
             if args.train_dataset_text_columns[i] != "sentence":
                 dataset = dataset.rename_column(
@@ -285,7 +285,7 @@ def load_all_datasets(split):
     elif split == 'eval':
         for i, ds in enumerate(args.eval_datasets):
             dataset = load_dataset(
-                ds, args.eval_dataset_configs[i], split=args.eval_dataset_splits[i])
+                ds, args.eval_dataset_configs[i], split=args.eval_dataset_splits[i], trust_remote_code=True)
             dataset = dataset.cast_column("audio", Audio(args.sampling_rate))
             if args.eval_dataset_text_columns[i] != "sentence":
                 dataset = dataset.rename_column(
