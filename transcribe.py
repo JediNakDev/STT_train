@@ -4,7 +4,7 @@ from transformers import pipeline
 from pathlib import Path
 
 '''
-python3 transcribe_audio.py \
+python3 transcribe.py \
 --is_public_repo True \
 --hf_model biodatlab/whisper-th-large-v3-combined \
 --path_to_audio /path/to/audio/file.wav \

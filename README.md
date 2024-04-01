@@ -59,7 +59,7 @@ torchrun --nproc_per_node=${ngpu} train_hf_dataset.py \
 ### Custom Dataset
 
 ```
-python3 evaluate/evaluate_on_custom_dataset.py \
+python3 eval_custom_dataset.py \
 --is_public_repo True \
 --hf_model biodatlab/whisper-th-large-v3-combine \
 --language th \
@@ -72,7 +72,7 @@ python3 evaluate/evaluate_on_custom_dataset.py \
 ### Hf Dataset
 
 ```
-python3 evaluate/evaluate_on_hf_dataset.py \
+python3 eval_hf_dataset.py \
 --is_public_repo True \
 --hf_model biodatlab/whisper-th-large-v3-combined \
 --language th \
@@ -87,7 +87,7 @@ python3 evaluate/evaluate_on_hf_dataset.py \
 ## Transcribe
 
 ```
-python3 transcribe_audio.py \
+python3 transcribe.py \
 --is_public_repo True \
 --hf_model biodatlab/whisper-th-large-v3-combined \
 --path_to_audio /path/to/audio/file.wav \

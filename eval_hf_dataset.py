@@ -11,7 +11,7 @@ wer_metric = evaluate.load("wer")
 cer_metric = evaluate.load("cer")
 
 '''
-python3 evaluate/evaluate_on_hf_dataset.py \
+python3 eval_hf_dataset.py \
 --is_public_repo True \
 --hf_model biodatlab/whisper-th-large-v3-combined \
 --language th \
