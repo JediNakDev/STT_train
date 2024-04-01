@@ -3,6 +3,15 @@ import os
 from transformers import pipeline
 from pathlib import Path
 
+'''
+python3 transcribe_audio.py \
+--is_public_repo True \
+--hf_model biodatlab/whisper-th-large-v3-combined \
+--path_to_audio /path/to/audio/file.wav \
+--language th \
+--device 0
+'''
+
 parser = argparse.ArgumentParser(
     description='Script to transcribe a custom audio file of any length using Whisper Models of various sizes.')
 parser.add_argument(

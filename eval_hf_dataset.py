@@ -10,6 +10,19 @@ from transformers.models.whisper.english_normalizer import BasicTextNormalizer
 wer_metric = evaluate.load("wer")
 cer_metric = evaluate.load("cer")
 
+'''
+python3 evaluate/evaluate_on_hf_dataset.py \
+--is_public_repo True \
+--hf_model biodatlab/whisper-th-large-v3-combined \
+--language th \
+--dataset "google/fleurs" \
+--config th_th \
+--split test \
+--device 0 \
+--batch_size 16 \
+--output_dir predictions_dir
+'''
+
 
 def is_target_text_in_range(ref):
     if ref.strip() == "ignore time segment in scoring":
