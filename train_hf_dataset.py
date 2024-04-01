@@ -10,13 +10,13 @@ from transformers import WhisperFeatureExtractor, WhisperTokenizer, WhisperProce
 #######################     ARGUMENT PARSING        #########################
 
 '''
-ngpu=4 # number of GPUs to perform distributed training on.
+ngpu=8 # number of GPUs to perform distributed training on.
 
 torchrun --nproc_per_node=${ngpu} train_hf_dataset.py \
 --model_name biodatlab/whisper-th-medium \
 --language Thai \
 --sampling_rate 16000 \
---num_proc 2 \
+--num_proc 1 \
 --train_strategy steps \
 --learning_rate 1e-05 \
 --warmup 500 \
@@ -29,12 +29,12 @@ torchrun --nproc_per_node=${ngpu} train_hf_dataset.py \
 --train_dataset_configs th_th th_th \
 --train_dataset_splits train validation \
 --train_dataset_text_columns transcription transcription \
---train_dataset_dir "data/huggingface/datasets" "data/huggingface/datasets" \
+--train_dataset_dir "/data/huggingface/datasets" "/data/huggingface/datasets" \
 --eval_datasets "google/fleurs" \
 --eval_dataset_configs th_th \
 --eval_dataset_splits test \
 --eval_dataset_text_columns transcription \
---eval_dataset_dir "data/huggingface/datasets" 
+--eval_dataset_dir "/data/huggingface/datasets" 
 '''
 
 parser = argparse.ArgumentParser(
@@ -361,12 +361,14 @@ raw_dataset = DatasetDict()
 raw_dataset["train"] = load_all_datasets('train')
 raw_dataset["eval"] = load_all_datasets('eval')
 
-raw_dataset = raw_dataset.map(prepare_dataset, num_proc=args.num_proc)
+raw_dataset = raw_dataset.map(prepare_dataset
+                              #   , num_proc=args.num_proc
+                              )
 
 raw_dataset = raw_dataset.filter(
     is_in_length_range,
     input_columns=["input_length", "labels"],
-    num_proc=args.num_proc,
+    # num_proc=args.num_proc,
 )
 
 ###############################     DATA COLLATOR AND METRIC DEFINITION     ########################
