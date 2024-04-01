@@ -9,6 +9,26 @@ from transformers import WhisperFeatureExtractor, WhisperTokenizer, WhisperProce
 
 #######################     ARGUMENT PARSING        #########################
 
+'''
+ngpu=4  # number of GPUs to perform distributed training on.
+
+torchrun --nproc_per_node=${ngpu} train_custom_dataset.py \
+--model_name biodatlab/whisper-th-large-v3-combined \
+--language Thai \
+--sampling_rate 16000 \
+--num_proc 2 \
+--train_strategy epoch \
+--learning_rate 3e-3 \
+--warmup 1000 \
+--train_batchsize 16 \
+--eval_batchsize 8 \
+--num_epochs 20 \
+--resume_from_ckpt None \
+--output_dir op_dir_epoch \
+--train_datasets output_data_directory/train_dataset_1 output_data_directory/train_dataset_2 \
+--eval_datasets output_data_directory/eval_dataset_1 output_data_directory/eval_dataset_2 output_data_directory/eval_dataset_3
+'''
+
 parser = argparse.ArgumentParser(
     description='Fine-tuning script for Whisper Models of various sizes.')
 parser.add_argument(
