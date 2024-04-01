@@ -13,18 +13,18 @@ from transformers import WhisperFeatureExtractor, WhisperTokenizer, WhisperProce
 ngpu=4  # number of GPUs to perform distributed training on.
 
 torchrun --nproc_per_node=${ngpu} train_custom_dataset.py \
---model_name biodatlab/whisper-th-large-v3-combined \
+--model_name biodatlab/whisper-th-medium \
 --language Thai \
 --sampling_rate 16000 \
 --num_proc 2 \
---train_strategy epoch \
---learning_rate 3e-3 \
---warmup 1000 \
+--train_strategy steps \
+--learning_rate 1e-05 \
+--warmup 500 \
 --train_batchsize 16 \
---eval_batchsize 8 \
---num_epochs 20 \
+--eval_batchsize 16 \
+--num_steps 10000 \
 --resume_from_ckpt None \
---output_dir op_dir_epoch \
+--output_dir op_dir_steps \
 --train_datasets output_data_directory/train_dataset_1 output_data_directory/train_dataset_2 \
 --eval_datasets output_data_directory/eval_dataset_1 output_data_directory/eval_dataset_2 output_data_directory/eval_dataset_3
 '''

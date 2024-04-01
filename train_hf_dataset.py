@@ -29,12 +29,12 @@ torchrun --nproc_per_node=${ngpu} train_hf_dataset.py \
 --train_dataset_configs th_th th_th \
 --train_dataset_splits train validation \
 --train_dataset_text_columns transcription transcription \
---train_dataset_dir "~/data/huggingface/datasets" "~/data/huggingface/datasets" \
+--train_dataset_dir "data/huggingface/datasets" "data/huggingface/datasets" \
 --eval_datasets "google/fleurs" \
 --eval_dataset_configs th_th \
 --eval_dataset_splits test \
---eval_dataset_text_columns transcription
---eval_dataset_dir "~/data/huggingface/datasets" \
+--eval_dataset_text_columns transcription \
+--eval_dataset_dir "data/huggingface/datasets" 
 '''
 
 parser = argparse.ArgumentParser(
@@ -271,7 +271,8 @@ tokenizer = WhisperTokenizer.from_pretrained(
     args.model_name, language=args.language, task="transcribe")
 processor = WhisperProcessor.from_pretrained(
     args.model_name, language=args.language, task="transcribe")
-model = WhisperForConditionalGeneration.from_pretrained(args.model_name)
+model = WhisperForConditionalGeneration.from_pretrained(
+    args.model_name, cache_dir="data/huggingface/hub")
 
 if model.config.decoder_start_token_id is None:
     raise ValueError(
