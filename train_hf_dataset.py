@@ -268,11 +268,11 @@ normalizer = BasicTextNormalizer()
 
 feature_extractor = WhisperFeatureExtractor.from_pretrained(args.model_name)
 tokenizer = WhisperTokenizer.from_pretrained(
-    args.model_name, language=args.language, task="transcribe")
+    args.model_name, language=args.language, task="transcribe", pretrained_model_name_or_path="data/huggingface/hub")
 processor = WhisperProcessor.from_pretrained(
-    args.model_name, language=args.language, task="transcribe")
+    args.model_name, language=args.language, task="transcribe", pretrained_model_name_or_path="data/huggingface/hub")
 model = WhisperForConditionalGeneration.from_pretrained(
-    args.model_name, cache_dir="data/huggingface/hub")
+    args.model_name, pretrained_model_name_or_path="data/huggingface/hub")
 
 if model.config.decoder_start_token_id is None:
     raise ValueError(
