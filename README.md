@@ -1,9 +1,12 @@
-#STT
+# STT
 
-##Train
+> Most of this code is from [vasistalodagala/whisper-finetune](https://github.com/vasistalodagala/whisper-finetune/)
 
-###Custom Dataset
-'''
+## Train
+
+### Custom Dataset
+
+```
 ngpu=4 # number of GPUs to perform distributed training on.
 
 torchrun --nproc_per_node=${ngpu} train_custom_dataset.py \
@@ -21,10 +24,11 @@ torchrun --nproc_per_node=${ngpu} train_custom_dataset.py \
 --output_dir op_dir_epoch \
 --train_datasets output_data_directory/train_dataset_1 output_data_directory/train_dataset_2 \
 --eval_datasets output_data_directory/eval_dataset_1 output_data_directory/eval_dataset_2 output_data_directory/eval_dataset_3
-'''
+```
 
-###Hf Dataset
-'''
+### Hf Dataset
+
+```
 ngpu=4 # number of GPUs to perform distributed training on.
 
 torchrun --nproc_per_node=${ngpu} train_hf_dataset.py \
@@ -48,12 +52,13 @@ torchrun --nproc_per_node=${ngpu} train_hf_dataset.py \
 --eval_dataset_configs th_th \
 --eval_dataset_splits test \
 --eval_dataset_text_columns transcription
-'''
+```
 
-##Evaluate
+## Evaluate
 
-###Custom Dataset
-'''
+### Custom Dataset
+
+```
 python3 evaluate/evaluate_on_custom_dataset.py \
 --is_public_repo True \
 --hf_model biodatlab/whisper-th-large-v3-combine \
@@ -62,10 +67,11 @@ python3 evaluate/evaluate_on_custom_dataset.py \
 --device 0 \
 --batch_size 16 \
 --output_dir predictions_dir
-'''
+```
 
-###Hf Dataset
-'''
+### Hf Dataset
+
+```
 python3 evaluate/evaluate_on_hf_dataset.py \
 --is_public_repo True \
 --hf_model biodatlab/whisper-th-large-v3-combined \
@@ -76,14 +82,15 @@ python3 evaluate/evaluate_on_hf_dataset.py \
 --device 0 \
 --batch_size 16 \
 --output_dir predictions_dir
-'''
+```
 
-##Transcribe
-'''
+## Transcribe
+
+```
 python3 transcribe_audio.py \
 --is_public_repo True \
 --hf_model biodatlab/whisper-th-large-v3-combined \
 --path_to_audio /path/to/audio/file.wav \
 --language th \
 --device 0
-'''
+```
