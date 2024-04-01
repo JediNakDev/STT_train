@@ -13,15 +13,15 @@ from transformers import WhisperFeatureExtractor, WhisperTokenizer, WhisperProce
 ngpu=4 # number of GPUs to perform distributed training on.
 
 torchrun --nproc_per_node=${ngpu} train_hf_dataset.py \
---model_name biodatlab/whisper-th-large-v3-combined \
+--model_name biodatlab/whisper-th-medium \
 --language Thai \
 --sampling_rate 16000 \
 --num_proc 2 \
 --train_strategy steps \
---learning_rate 3e-3 \
---warmup 1000 \
+--learning_rate 1e-05 \
+--warmup 500 \
 --train_batchsize 16 \
---eval_batchsize 8 \
+--eval_batchsize 16 \
 --num_steps 10000 \
 --resume_from_ckpt None \
 --output_dir op_dir_steps \
@@ -29,10 +29,12 @@ torchrun --nproc_per_node=${ngpu} train_hf_dataset.py \
 --train_dataset_configs th_th th_th \
 --train_dataset_splits train validation \
 --train_dataset_text_columns transcription transcription \
+--train_dataset_dir "~/data/huggingface/datasets" "~/data/huggingface/datasets" \
 --eval_datasets "google/fleurs" \
 --eval_dataset_configs th_th \
 --eval_dataset_splits test \
 --eval_dataset_text_columns transcription
+--eval_dataset_dir "~/data/huggingface/datasets" \
 '''
 
 parser = argparse.ArgumentParser(
@@ -161,6 +163,14 @@ parser.add_argument(
     help="Text column name of each training dataset. Eg. 'sentence' for Common Voice",
 )
 parser.add_argument(
+    '--train_dataset_dir',
+    type=str,
+    nargs='+',
+    required=True,
+    default=[],
+    help="Directory for dataset",
+)
+parser.add_argument(
     '--eval_datasets',
     type=str,
     nargs='+',
@@ -191,6 +201,14 @@ parser.add_argument(
     required=True,
     default=[],
     help="Text column name of each evaluation dataset. Eg. 'transcription' for Google Fleurs",
+)
+parser.add_argument(
+    '--eval_dataset_dir',
+    type=str,
+    nargs='+',
+    required=True,
+    default=[],
+    help="Directory for dataset",
 )
 
 args = parser.parse_args()
@@ -223,6 +241,13 @@ if len(args.train_datasets) != len(args.train_dataset_text_columns):
 if len(args.eval_datasets) != len(args.eval_dataset_text_columns):
     raise ValueError(
         f"Ensure that the number of entries in the list of eval_datasets equals the number of entries in the list of eval_dataset_text_columns. Received {len(args.eval_datasets)} entries for eval_datasets and {len(args.eval_dataset_text_columns)} for eval_dataset_text_columns.")
+
+if len(args.train_datasets) != len(args.train_dataset_dir):
+    raise ValueError(
+        f"Ensure that the number of entries in the list of train_datasets equals the number of entries in the list of train_dataset_dir. Received {len(args.train_datasets)} entries for eval_datasets and {len(args.train_dataset_dir)} for train_dataset_text_columns.")
+if len(args.eval_datasets) != len(args.eval_dataset_dir):
+    raise ValueError(
+        f"Ensure that the number of entries in the list of eval_datasets equals the number of entries in the list of eval_dataset_dir. Received {len(args.eval_datasets)} entries for eval_datasets and {len(args.eval_dataset_dir)} for eval_dataset_text_columns.")
 
 print('\n\n+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n\n')
 print('ARGUMENTS OF INTEREST:')
@@ -274,7 +299,7 @@ def load_all_datasets(split):
     if split == 'train':
         for i, ds in enumerate(args.train_datasets):
             dataset = load_dataset(
-                ds, args.train_dataset_configs[i], split=args.train_dataset_splits[i], trust_remote_code=True)
+                ds, args.train_dataset_configs[i], split=args.train_dataset_splits[i], trust_remote_code=True, cache_dir=args.train_dataset_dir[i])
             dataset = dataset.cast_column("audio", Audio(args.sampling_rate))
             if args.train_dataset_text_columns[i] != "sentence":
                 dataset = dataset.rename_column(
@@ -285,7 +310,7 @@ def load_all_datasets(split):
     elif split == 'eval':
         for i, ds in enumerate(args.eval_datasets):
             dataset = load_dataset(
-                ds, args.eval_dataset_configs[i], split=args.eval_dataset_splits[i], trust_remote_code=True)
+                ds, args.eval_dataset_configs[i], split=args.eval_dataset_splits[i], trust_remote_code=True, cache_dir=args.eval_dataset_dir[i])
             dataset = dataset.cast_column("audio", Audio(args.sampling_rate))
             if args.eval_dataset_text_columns[i] != "sentence":
                 dataset = dataset.rename_column(
@@ -295,7 +320,7 @@ def load_all_datasets(split):
             combined_dataset.append(dataset)
 
     ds_to_return = concatenate_datasets(combined_dataset)
-    ds_to_return = ds_to_return.shuffle(seed=22)
+    ds_to_return = ds_to_return.shuffle(seed=42)
     return ds_to_return
 
 
