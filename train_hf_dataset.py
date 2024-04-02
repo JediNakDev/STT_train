@@ -16,7 +16,7 @@ torchrun --nproc_per_node=${ngpu} train_hf_dataset.py \
 --model_name biodatlab/whisper-th-medium \
 --language Thai \
 --sampling_rate 16000 \
---num_proc 1 \
+--num_proc 8 \
 --train_strategy steps \
 --learning_rate 1e-05 \
 --warmup 500 \
@@ -361,14 +361,12 @@ raw_dataset = DatasetDict()
 raw_dataset["train"] = load_all_datasets('train')
 raw_dataset["eval"] = load_all_datasets('eval')
 
-raw_dataset = raw_dataset.map(prepare_dataset
-                              #   , num_proc=args.num_proc
-                              )
+raw_dataset = raw_dataset.map(prepare_dataset, num_proc=args.num_proc)
 
 raw_dataset = raw_dataset.filter(
     is_in_length_range,
     input_columns=["input_length", "labels"],
-    # num_proc=args.num_proc,
+    num_proc=args.num_proc,
 )
 
 ###############################     DATA COLLATOR AND METRIC DEFINITION     ########################
