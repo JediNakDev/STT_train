@@ -326,7 +326,6 @@ def load_all_datasets(split):
 
 
 def prepare_dataset(batch):
-    print("START", batch["path"])
     # load and (possibly) resample audio data to 16kHz
     audio = batch["audio"]
 
@@ -345,7 +344,6 @@ def prepare_dataset(batch):
 
     # encode target text to label ids
     batch["labels"] = processor.tokenizer(transcription).input_ids
-    print("FINISH", batch["path"])
     return batch
 
 
