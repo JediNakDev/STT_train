@@ -25,10 +25,10 @@ torchrun --nproc_per_node=${ngpu} train_hf_dataset.py \
 --eval_batchsize 8 \
 --num_steps 10000 \
 --resume_from_ckpt None \
---output_dir op_dir_steps \
+--output_dir "/data/model/checkpoint_test" \
 --train_datasets "google/fleurs" \
 --train_dataset_configs th_th \
---train_dataset_splits test \
+--train_dataset_splits train \
 --train_dataset_text_columns transcription \
 --train_dataset_dir "/data/huggingface/datasets" \
 --eval_datasets "google/fleurs" \
@@ -350,7 +350,7 @@ def prepare_dataset(batch):
 
 class ChunkedDataset(torch.utils.data.Dataset):
     def __init__(self, dataset_path, chunk_size=1000):
-        self.dataset = load_dataset(dataset_path)
+        self.dataset = load_all_datasets(dataset_path)
         self.chunk_size = chunk_size
 
     def __len__(self):
