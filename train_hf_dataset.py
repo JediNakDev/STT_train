@@ -1,3 +1,4 @@
+from datasets import DatasetDict, load_dataset
 import torch
 import argparse
 import evaluate
@@ -347,6 +348,21 @@ def prepare_dataset(batch):
     return batch
 
 
+class ChunkedDataset(torch.utils.data.Dataset):
+    def __init__(self, dataset_path, chunk_size=1000):
+        self.dataset = load_dataset(dataset_path)
+        self.chunk_size = chunk_size
+
+    def __len__(self):
+        return len(self.dataset)
+
+    def __getitem__(self, idx):
+        start_idx = idx * self.chunk_size
+        end_idx = min((idx + 1) * self.chunk_size, len(self.dataset))
+        chunk = self.dataset[start_idx:end_idx]
+        return prepare_dataset(chunk)
+
+
 max_label_length = model.config.max_length
 min_input_length = 0.0
 max_input_length = 30.0
@@ -357,18 +373,10 @@ def is_in_length_range(length, labels):
 
 
 print('DATASET PREPARATION IN PROGRESS...')
+# Load datasets in chunks
 raw_dataset = DatasetDict()
-raw_dataset["train"] = load_all_datasets('train')
-raw_dataset["eval"] = load_all_datasets('eval')
-
-raw_dataset = raw_dataset.map(prepare_dataset, num_proc=args.num_proc)
-
-raw_dataset = raw_dataset.filter(
-    is_in_length_range,
-    input_columns=["input_length", "labels"],
-    num_proc=args.num_proc,
-)
-
+raw_dataset["train"] = ChunkedDataset('train')
+raw_dataset["eval"] = ChunkedDataset('eval')
 ###############################     DATA COLLATOR AND METRIC DEFINITION     ########################
 
 
