@@ -10,29 +10,29 @@ from transformers import WhisperFeatureExtractor, WhisperTokenizer, WhisperProce
 #######################     ARGUMENT PARSING        #########################
 
 '''
-ngpu=8 # number of GPUs to perform distributed training on.
+ngpu=1 # number of GPUs to perform distributed training on.
 
 torchrun --nproc_per_node=${ngpu} train_hf_dataset.py \
 --model_name biodatlab/whisper-th-medium \
 --language Thai \
 --sampling_rate 16000 \
---num_proc 8 \
+--num_proc 1 \
 --train_strategy steps \
 --learning_rate 1e-05 \
 --warmup 500 \
---train_batchsize 16 \
---eval_batchsize 16 \
+--train_batchsize 8 \
+--eval_batchsize 8 \
 --num_steps 10000 \
 --resume_from_ckpt None \
 --output_dir op_dir_steps \
---train_datasets "google/fleurs" "google/fleurs" \
---train_dataset_configs th_th th_th \
---train_dataset_splits train validation \
---train_dataset_text_columns transcription transcription \
---train_dataset_dir "/data/huggingface/datasets" "/data/huggingface/datasets" \
+--train_datasets "google/fleurs" \
+--train_dataset_configs th_th \
+--train_dataset_splits test \
+--train_dataset_text_columns transcription \
+--train_dataset_dir "/data/huggingface/datasets" \
 --eval_datasets "google/fleurs" \
 --eval_dataset_configs th_th \
---eval_dataset_splits test \
+--eval_dataset_splits validation \
 --eval_dataset_text_columns transcription \
 --eval_dataset_dir "/data/huggingface/datasets" 
 '''
@@ -409,7 +409,7 @@ data_collator = DataCollatorSpeechSeq2SeqWithPadding(processor=processor)
 print('DATASET PREPARATION COMPLETED')
 
 
-metric = evaluate.load("wer")
+metric = evaluate.load("cer")
 
 
 def compute_metrics(pred):
@@ -429,8 +429,8 @@ def compute_metrics(pred):
         pred_str = [normalizer(pred) for pred in pred_str]
         label_str = [normalizer(label) for label in label_str]
 
-    wer = 100 * metric.compute(predictions=pred_str, references=label_str)
-    return {"wer": wer}
+    cer = 100 * metric.compute(predictions=pred_str, references=label_str)
+    return {"cer": cer}
 
 
 ###############################     TRAINING ARGS AND TRAINING      ############################
@@ -443,7 +443,7 @@ if args.train_strategy == 'epoch':
         learning_rate=args.learning_rate,
         warmup_steps=args.warmup,
         gradient_checkpointing=gradient_checkpointing,
-        fp16=True,
+        fp16=False,
         evaluation_strategy="epoch",
         save_strategy="epoch",
         num_train_epochs=args.num_epochs,
@@ -454,7 +454,7 @@ if args.train_strategy == 'epoch':
         logging_steps=500,
         report_to=["tensorboard"],
         load_best_model_at_end=True,
-        metric_for_best_model="wer",
+        metric_for_best_model="cer",
         greater_is_better=False,
         optim="adamw_bnb_8bit",
         resume_from_checkpoint=args.resume_from_ckpt,
@@ -468,7 +468,7 @@ elif args.train_strategy == 'steps':
         learning_rate=args.learning_rate,
         warmup_steps=args.warmup,
         gradient_checkpointing=gradient_checkpointing,
-        fp16=True,
+        fp16=False,
         evaluation_strategy="steps",
         eval_steps=1000,
         save_strategy="steps",
@@ -481,7 +481,7 @@ elif args.train_strategy == 'steps':
         logging_steps=500,
         report_to=["tensorboard"],
         load_best_model_at_end=True,
-        metric_for_best_model="wer",
+        metric_for_best_model="cer",
         greater_is_better=False,
         optim="adamw_bnb_8bit",
         resume_from_checkpoint=args.resume_from_ckpt,
