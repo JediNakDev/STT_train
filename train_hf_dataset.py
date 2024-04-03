@@ -373,12 +373,17 @@ def is_in_length_range(length, labels):
 
 
 print('DATASET PREPARATION IN PROGRESS...')
-# Load datasets in chunks
 raw_dataset = DatasetDict()
 raw_dataset["train"] = load_all_datasets('train')
 raw_dataset["eval"] = load_all_datasets('eval')
 
 raw_dataset = raw_dataset.map(prepare_dataset, num_proc=args.num_proc)
+
+raw_dataset = raw_dataset.filter(
+    is_in_length_range,
+    input_columns=["input_length", "labels"],
+    num_proc=args.num_proc,
+)
 ###############################     DATA COLLATOR AND METRIC DEFINITION     ########################
 
 
