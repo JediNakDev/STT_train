@@ -54,7 +54,6 @@ soxr==0.3.7
 sympy==1.12
 threadpoolctl==3.4.0
 tokenizers==0.15.2
-torch==2.2.2
 tqdm==4.66.2
 transformers==4.39.2
 typing==3.7.4.3
