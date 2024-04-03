@@ -376,7 +376,7 @@ print('DATASET PREPARATION IN PROGRESS...')
 raw_dataset = DatasetDict()
 raw_dataset["train"] = load_all_datasets('train')
 raw_dataset["eval"] = load_all_datasets('eval')
-
+print('LOADING DATASET COMPLETED')
 raw_dataset = raw_dataset.map(prepare_dataset, num_proc=args.num_proc)
 
 raw_dataset = raw_dataset.filter(
