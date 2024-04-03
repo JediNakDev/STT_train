@@ -329,7 +329,6 @@ def load_all_datasets(split):
 def prepare_dataset(batch):
     # load and (possibly) resample audio data to 16kHz
     audio = batch["audio"]
-    print("prepare_dataset", batch)
 
     # compute log-Mel input features from input audio array
     batch["input_features"] = processor.feature_extractor(
@@ -376,8 +375,8 @@ def is_in_length_range(length, labels):
 print('DATASET PREPARATION IN PROGRESS...')
 # Load datasets in chunks
 raw_dataset = DatasetDict()
-raw_dataset["train"] = ChunkedDataset('train')
-raw_dataset["eval"] = ChunkedDataset('eval')
+raw_dataset["train"] = prepare_dataset('train')
+raw_dataset["eval"] = prepare_dataset('eval')
 ###############################     DATA COLLATOR AND METRIC DEFINITION     ########################
 
 
