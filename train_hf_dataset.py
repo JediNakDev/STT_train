@@ -11,18 +11,18 @@ from transformers import WhisperFeatureExtractor, WhisperTokenizer, WhisperProce
 #######################     ARGUMENT PARSING        #########################
 
 '''
-ngpu=8 # number of GPUs to perform distributed training on.
+ngpu=1 # number of GPUs to perform distributed training on.
 
 torchrun --nproc_per_node=${ngpu} train_hf_dataset.py \
 --model_name biodatlab/whisper-th-medium \
 --language Thai \
 --sampling_rate 16000 \
---num_proc 8 \
+--num_proc 1 \
 --train_strategy steps \
 --learning_rate 1e-05 \
 --warmup 500 \
---train_batchsize 16 \
---eval_batchsize 16 \
+--train_batchsize 8 \
+--eval_batchsize 8 \
 --num_steps 10000 \
 --resume_from_ckpt None \
 --output_dir "/data/model/checkpoint_test" \
@@ -458,7 +458,7 @@ if args.train_strategy == 'epoch':
         learning_rate=args.learning_rate,
         warmup_steps=args.warmup,
         gradient_checkpointing=gradient_checkpointing,
-        fp16=False,
+        fp16=True,
         evaluation_strategy="epoch",
         save_strategy="epoch",
         num_train_epochs=args.num_epochs,
@@ -473,6 +473,7 @@ if args.train_strategy == 'epoch':
         greater_is_better=False,
         optim="adamw_bnb_8bit",
         resume_from_checkpoint=args.resume_from_ckpt,
+        use_reentrant=False,
     )
 
 elif args.train_strategy == 'steps':
@@ -483,7 +484,7 @@ elif args.train_strategy == 'steps':
         learning_rate=args.learning_rate,
         warmup_steps=args.warmup,
         gradient_checkpointing=gradient_checkpointing,
-        fp16=False,
+        fp16=True,
         evaluation_strategy="steps",
         eval_steps=1000,
         save_strategy="steps",
@@ -500,6 +501,7 @@ elif args.train_strategy == 'steps':
         greater_is_better=False,
         optim="adamw_bnb_8bit",
         resume_from_checkpoint=args.resume_from_ckpt,
+        use_reentrant=False,
     )
 
 trainer = Seq2SeqTrainer(
