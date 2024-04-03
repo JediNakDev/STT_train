@@ -329,7 +329,7 @@ def load_all_datasets(split):
 def prepare_dataset(batch):
     # load and (possibly) resample audio data to 16kHz
     audio = batch["audio"]
-    print("prepare_dataset", audio)
+    print("prepare_dataset", batch)
 
     # compute log-Mel input features from input audio array
     batch["input_features"] = processor.feature_extractor(
