@@ -473,7 +473,6 @@ if args.train_strategy == 'epoch':
         greater_is_better=False,
         optim="adamw_bnb_8bit",
         resume_from_checkpoint=args.resume_from_ckpt,
-        use_reentrant=False,
     )
 
 elif args.train_strategy == 'steps':
@@ -501,7 +500,6 @@ elif args.train_strategy == 'steps':
         greater_is_better=False,
         optim="adamw_bnb_8bit",
         resume_from_checkpoint=args.resume_from_ckpt,
-        use_reentrant=False,
     )
 
 trainer = Seq2SeqTrainer(
