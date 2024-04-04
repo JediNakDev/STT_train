@@ -21,8 +21,8 @@ torchrun --nproc_per_node=${ngpu} train_hf_dataset.py \
 --train_strategy steps \
 --learning_rate 1e-05 \
 --warmup 500 \
---train_batchsize 8 \
---eval_batchsize 8 \
+--train_batchsize 16 \
+--eval_batchsize 16 \
 --num_steps 10000 \
 --resume_from_ckpt None \
 --output_dir "/data/model/checkpoint_test" \
@@ -255,7 +255,7 @@ print('ARGUMENTS OF INTEREST:')
 print(vars(args))
 print('\n\n+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n\n')
 
-gradient_checkpointing = True
+gradient_checkpointing = False
 freeze_feature_encoder = False
 freeze_encoder = False
 
