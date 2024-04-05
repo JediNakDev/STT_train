@@ -10,13 +10,13 @@ from transformers import WhisperFeatureExtractor, WhisperTokenizer, WhisperProce
 #######################     ARGUMENT PARSING        #########################
 
 '''
-ngpu=4  # number of GPUs to perform distributed training on.
+ngpu=1  # number of GPUs to perform distributed training on.
 
 torchrun --nproc_per_node=${ngpu} train_custom_dataset.py \
 --model_name biodatlab/whisper-th-medium \
 --language Thai \
 --sampling_rate 16000 \
---num_proc 2 \
+--num_proc 1 \
 --train_strategy steps \
 --learning_rate 1e-05 \
 --warmup 500 \
@@ -24,9 +24,9 @@ torchrun --nproc_per_node=${ngpu} train_custom_dataset.py \
 --eval_batchsize 16 \
 --num_steps 10000 \
 --resume_from_ckpt None \
---output_dir op_dir_steps \
---train_datasets output_data_directory/train_dataset_1 output_data_directory/train_dataset_2 \
---eval_datasets output_data_directory/eval_dataset_1 output_data_directory/eval_dataset_2 output_data_directory/eval_dataset_3
+--output_dir "/data/model/checkpoint_test" \
+--train_datasets "/data/custom_dataset/train"  \
+--eval_datasets "/data/custom_dataset/eval"
 '''
 
 parser = argparse.ArgumentParser(
