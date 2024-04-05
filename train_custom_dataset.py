@@ -149,7 +149,7 @@ print('ARGUMENTS OF INTEREST:')
 print(vars(args))
 print('\n\n+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n\n')
 
-gradient_checkpointing = True
+gradient_checkpointing = False
 freeze_feature_encoder = False
 freeze_encoder = False
 
@@ -238,7 +238,7 @@ print('DATASET PREPARATION IN PROGRESS...')
 raw_dataset = DatasetDict()
 raw_dataset["train"] = load_custom_dataset('train')
 raw_dataset["eval"] = load_custom_dataset('eval')
-
+print('LOADING DATASET COMPLETED')
 raw_dataset = raw_dataset.cast_column(
     "audio", Audio(sampling_rate=args.sampling_rate))
 raw_dataset = raw_dataset.map(prepare_dataset, num_proc=args.num_proc)
