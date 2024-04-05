@@ -1,5 +1,6 @@
 from datasets import DatasetDict, load_dataset
 import torch
+import gc
 import argparse
 import evaluate
 from dataclasses import dataclass
@@ -515,5 +516,7 @@ trainer = Seq2SeqTrainer(
 processor.save_pretrained(training_args.output_dir)
 
 print('TRAINING IN PROGRESS...')
+torch.cuda.empty_cache()
+gc.collect()
 trainer.train()
 print('DONE TRAINING')
