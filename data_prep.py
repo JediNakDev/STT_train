@@ -1,6 +1,12 @@
 import argparse
 from datasets import Dataset, Audio, Value
 
+'''
+python3 custom_data/data_prep.py \
+--source_data_dir "data/custom_dataset/preprep_train" \
+--output_data_dir "data/custom_dataset/train"
+'''
+
 parser = argparse.ArgumentParser(
     description='Preliminary data preparation script before Whisper Fine-tuning.')
 parser.add_argument('--source_data_dir', type=str, required=True, default=False,

@@ -84,6 +84,14 @@ python3 eval_hf_dataset.py \
 --output_dir predictions_dir
 ```
 
+## Data Preparation
+
+```
+python3 custom_data/data_prep.py \
+--source_data_dir "data/custom_dataset/preprep_train" \
+--output_data_dir "data/custom_dataset/train"
+```
+
 ## Transcribe
 
 ```
